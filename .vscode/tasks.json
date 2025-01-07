@@ -1,0 +1,54 @@
+{
+    "version": "2.0.0",
+    "inputs": [
+        {
+            "id": "release_version",
+            "description": "Enter the Release Version from Github",
+            "type": "promptString"
+        },
+        {
+            "id": "tag",
+            "description": "Enter the Release Version from Github",
+            "type": "promptString",
+            "default": "latest"
+        }
+    ],
+    "tasks": [
+		{
+			"label": "Build Docker Image",
+			"type": "shell",
+			"command": "docker",
+			"args": [
+				"build",
+				"--build-arg",
+				"GROCY_RELEASE=${input:release_version}",
+                "",
+				"--no-cache",
+				"-t",
+				"chilluniverse/grocy:${input:tag}",
+				"."
+			],
+			"problemMatcher": [],
+			"detail": "Build Docker image from Dockerfile"
+		},
+		{
+			"label": "Build and list Docker Images",
+			"type": "shell",
+			"command": "docker",
+			"args": [
+				"images",
+				"-f",
+				"label=org.opencontainers.image.title=chilluniverse/grocy"
+			],
+			"dependsOn": [
+				"Build Docker Image"
+			],
+			"group": {
+				"kind": "build",
+				"isDefault": true
+			},
+			"problemMatcher": [],
+			"detail": "Build and List Docker images matching the built image"
+		}
+	]
+}
