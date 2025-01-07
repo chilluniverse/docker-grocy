@@ -3,11 +3,10 @@
 FROM ghcr.io/linuxserver/baseimage-alpine-nginx:3.20
 
 # set version label
-ARG BUILD_DATE
-ARG VERSION
 ARG GROCY_RELEASE
-LABEL build_version="Linuxserver.io version:- ${VERSION} Build-date:- ${BUILD_DATE}"
-LABEL maintainer="alex-phillips, homerr"
+LABEL org.opencontainers.image.title="chilluniverse/grocy"
+LABEL org.opencontainers.image.authors="mail@chilluniverse.de"
+LABEL org.opencontainers.image.version=${GROCY_RELEASE}
 
 RUN \
   echo "**** install build packages ****" && \
@@ -28,12 +27,12 @@ RUN \
   echo "**** install grocy ****" && \
   mkdir -p /app/www && \
   if [ -z ${GROCY_RELEASE+x} ]; then \
-    GROCY_RELEASE=$(curl -sX GET "https://api.github.com/repos/grocy/grocy/releases/latest" \
+    GROCY_RELEASE=$(curl -sX GET "https://api.github.com/repos/chilluniverse/grocy/releases/latest" \
     | awk '/tag_name/{print $4;exit}' FS='[""]'); \
   fi && \
   curl -o \
     /tmp/grocy.tar.gz -L \
-    "https://github.com/grocy/grocy/archive/${GROCY_RELEASE}.tar.gz" && \
+    "https://github.com/chilluniverse/grocy/archive/${GROCY_RELEASE}.tar.gz" && \
   tar xf \
     /tmp/grocy.tar.gz -C \
     /app/www/ --strip-components=1 && \
@@ -45,7 +44,6 @@ RUN \
   cd /app/www && \
   yarn --production && \
   yarn cache clean && \
-  printf "Linuxserver.io version: ${VERSION}\nBuild-date: ${BUILD_DATE}" > /build_version && \
   echo "**** cleanup ****" && \
   apk del --purge \
     build-dependencies && \
