@@ -8,7 +8,7 @@
         },
         {
             "id": "tag",
-            "description": "Enter the Release Version from Github",
+            "description": "Enter a tag for the docker image.",
             "type": "promptString",
             "default": "latest"
         }
