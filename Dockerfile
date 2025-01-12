@@ -30,12 +30,21 @@ RUN \
     GROCY_RELEASE=$(curl -sX GET "https://api.github.com/repos/chilluniverse/grocy/releases/latest" \
     | awk '/tag_name/{print $4;exit}' FS='[""]'); \
   fi && \
-  curl -o \
-    /tmp/grocy.tar.gz -L \
-    "https://github.com/chilluniverse/grocy/archive/${GROCY_RELEASE}.tar.gz" && \
-  tar xf \
-    /tmp/grocy.tar.gz -C \
-    /app/www/ --strip-components=1 && \
+  if [ "$GROCY_RELEASE" = "master" ]; then \
+    curl -o \
+      /tmp/grocy.tar.gz -L \
+      "https://github.com/chilluniverse/grocy/archive/refs/heads/master.tar.gz" && \
+    tar xf \
+      /tmp/grocy.tar.gz -C \
+      /app/www/ --strip-components=1; \
+  else \
+    curl -o \
+      /tmp/grocy.tar.gz -L \
+      "https://github.com/chilluniverse/grocy/archive/${GROCY_RELEASE}.tar.gz" && \
+    tar xf \
+      /tmp/grocy.tar.gz -C \
+      /app/www/ --strip-components=1; \
+  fi && \
   cp -R /app/www/data/plugins \
     /defaults/plugins && \
   echo "**** install composer packages ****" && \
